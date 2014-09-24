@@ -2,6 +2,7 @@
 namespace SpoonerWeb\BeSecurePw\Hook;
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use SpoonerWeb\BeSecurePw\Utilities\PasswordExpirationUtility;
 /***************************************************************
  *  Copyright notice
  *
@@ -106,7 +107,16 @@ class BackendHook {
 	 */
 	public function processDatamap_preProcessFieldArray(&$incomingFieldArray, $table, $id, &$parentObj) {
 		if ($table == 'be_users' && $incomingFieldArray['password'] != '') {
-			$incomingFieldArray['tx_besecurepw_lastpwchange'] = time() + date('Z');
+				// only do that, if the record was edited from the user himself
+			if ($id == $GLOBALS['BE_USER']->user['uid'] && !$GLOBALS['BE_USER']->user['ses_backuserid']) {
+				$incomingFieldArray['tx_besecurepw_lastpwchange'] = time() + date('Z');
+				$incomingFieldArray['tx_besecurepw_forcepwchange'] = 0;
+			}
+
+				// trigger reload of the backend, if it was previously locked down
+			if(PasswordExpirationUtility::isBeUserPasswordExpired()) {
+				$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['be_secure_pw']['insertModuleRefreshJS'] = TRUE;
+			}
 		}
 	}
 }
