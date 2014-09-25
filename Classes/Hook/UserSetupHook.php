@@ -3,6 +3,7 @@ namespace SpoonerWeb\BeSecurePw\Hook;
 
 use TYPO3\CMS\Core\Utility;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
+use SpoonerWeb\BeSecurePw\Utilities\PasswordExpirationUtility;
 /***************************************************************
  *  Copyright notice
  *
@@ -71,6 +72,15 @@ class UserSetupHook {
 					}
 				}
 
+				$passwordExpiredNotice = NULL;
+				if ($extConf['forcePasswordChange'] && PasswordExpirationUtility::isBeUserPasswordExpired()) {
+					$passwordExpiredNotice = Utility\GeneralUtility::makeInstance('\\TYPO3\\CMS\\Core\\Messaging\\FlashMessage',
+						$GLOBALS['LANG']->getLL('beSecurePw.passwordExpiredBody'),
+						$GLOBALS['LANG']->getLL('beSecurePw.passwordExpiredHeader'),
+						FlashMessage::ERROR
+					);
+				}
+
 				// flash message with instructions for the user
 				$flashMessage = Utility\GeneralUtility::makeInstance(
 					'\\TYPO3\\CMS\\Core\\Messaging\\FlashMessage',
@@ -84,7 +94,7 @@ class UserSetupHook {
 					FlashMessage::INFO,
 					TRUE
 				);
-				$params['markers']['FLASHMESSAGES'] = '<div id="typo3-messages">' . $flashMessage->render() . '</div>';
+				$params['markers']['FLASHMESSAGES'] = '<div id="typo3-messages">' . ($passwordExpiredNotice ? $passwordExpiredNotice->render() : '') . $flashMessage->render() . '</div>';
 
 				// put flash message in front of content
 				if (strpos($params['moduleBody'], '###FLASHMESSAGES###') === FALSE) {

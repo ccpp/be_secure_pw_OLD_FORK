@@ -1,6 +1,7 @@
 <?php
 namespace SpoonerWeb\BeSecurePw\Hook;
 
+use SpoonerWeb\BeSecurePw\Utilities\PasswordExpirationUtility;
 /***************************************************************
  *  Copyright notice
  *
@@ -40,7 +41,7 @@ class RestrictModulesHook implements \TYPO3\CMS\Core\SingletonInterface {
 	public function addRefreshJavaScript(array $params, $pObj) {
 		if ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['be_secure_pw']['insertModuleRefreshJS']) {
 			$pageRenderer = $GLOBALS['TBE_TEMPLATE']->getPageRenderer();
-			$label = $GLOBALS['LANG']->sL('LLL:EXT:be_secure_pw/res/lang/locallang.xml:beSecurePw.backendNeedsToReload');
+			$label = $GLOBALS['LANG']->sL('LLL:EXT:be_secure_pw/Resources/Private/Language/locallang.xml:beSecurePw.backendNeedsToReload');
 			$pageRenderer->addExtOnReadyCode(
 				'alert("' . $label . '");
 					top.location.reload();
@@ -56,23 +57,23 @@ class RestrictModulesHook implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @param mixed $pObj
 	 */
 	public function postUserLookUp(array $params, $pObj) {
-		if (\SpoonerWeb\BeSecurePw\Utilities\PasswordExpirationUtility::isBeUserPasswordExpired()) {
-				// remove admin rights, because otherwise we can't restrict access to the modules
+		if (PasswordExpirationUtility::isBeUserPasswordExpired()) {
+			// remove admin rights, because otherwise we can't restrict access to the modules
 			$GLOBALS['BE_USER']->user['admin'] = 0;
-				// this grants the user access to the modules
+			// this grants the user access to the modules
 			$GLOBALS['BE_USER']->user['userMods'] = 'user,user_setup';
-				// remove all groups from the user, so he can not get access to any other modules than the ones we granted him
+			// remove all groups from the user, so he can not get access to any other modules than the ones we granted him
 			$GLOBALS['BE_USER']->user['usergroup'] = '';
-				// allow access to live and workspace, if the user is currently in a workspace, but the access is removed due to missing usergroup
+			// allow access to live and workspace, if the user is currently in a workspace, but the access is removed due to missing usergroup
 			$GLOBALS['BE_USER']->user['workspace_perms'] = 3;
 
-				// Disable all columns except password
+			// Disable all columns except password
 			$GLOBALS['TYPO3_USER_SETTINGS']['columns'] = array(
 				'password' => $GLOBALS['TYPO3_USER_SETTINGS']['columns']['password'],
 				'password2' => $GLOBALS['TYPO3_USER_SETTINGS']['columns']['password2'],
 			);
 
-				// Override showitem to remove tabs and all fields except password
+			// Override showitem to remove tabs and all fields except password
 			$GLOBALS['TYPO3_USER_SETTINGS']['showitem'] = '--div--;LLL:EXT:be_secure_pw/Resources/Private/Language/ux_locallang_csh_mod.xml:option_newPassword.description,password,password2';
 		}
 	}

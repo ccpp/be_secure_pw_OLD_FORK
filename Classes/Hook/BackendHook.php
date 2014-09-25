@@ -113,7 +113,7 @@ class BackendHook {
 				$incomingFieldArray['tx_besecurepw_forcepwchange'] = 0;
 			}
 
-				// trigger reload of the backend, if it was previously locked down
+			// trigger reload of the backend, if it was previously locked down
 			if(PasswordExpirationUtility::isBeUserPasswordExpired()) {
 				$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['be_secure_pw']['insertModuleRefreshJS'] = TRUE;
 			}
