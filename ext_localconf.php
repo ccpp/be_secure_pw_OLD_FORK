@@ -10,6 +10,7 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tce']['formevals']['SpoonerWeb\\BeSec
 // for editing per "user settings"
 $TYPO3_CONF_VARS['SC_OPTIONS']['typo3/template.php']['preStartPageHook'][] = 'SpoonerWeb\\BeSecurePw\\Hook\\UserSetupHook->preStartPageHook';
 $TYPO3_CONF_VARS['SC_OPTIONS']['typo3/template.php']['moduleBodyPostProcess'][] = 'SpoonerWeb\\BeSecurePw\\Hook\\UserSetupHook->moduleBodyPostProcess';
+$TYPO3_CONF_VARS['SC_OPTIONS']['ext/setup/mod/index.php']['modifyUserDataBeforeSave'][] = 'SpoonerWeb\\BeSecurePw\\Hook\\UserSetupHook->modifyUserDataBeforeSave';
 
 // password reminder
 $extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$_EXTKEY]);
