@@ -71,10 +71,16 @@ class RestrictModulesHook implements \TYPO3\CMS\Core\SingletonInterface {
 			$GLOBALS['TYPO3_USER_SETTINGS']['columns'] = array(
 				'password' => $GLOBALS['TYPO3_USER_SETTINGS']['columns']['password'],
 				'password2' => $GLOBALS['TYPO3_USER_SETTINGS']['columns']['password2'],
+				'savebutton' => array(
+					'buttonlabel' => 'LLL:EXT:be_secure_pw/Resources/Private/Language/ux_locallang_csh_mod.xml:option_newPassword.savebutton.label',
+					'label' => '',
+					'type' => 'button',
+					'onClick' => 'submit();',
+				),
 			);
 
 			// Override showitem to remove tabs and all fields except password
-			$GLOBALS['TYPO3_USER_SETTINGS']['showitem'] = '--div--;LLL:EXT:be_secure_pw/Resources/Private/Language/ux_locallang_csh_mod.xml:option_newPassword.description,password,password2';
+			$GLOBALS['TYPO3_USER_SETTINGS']['showitem'] = '--div--;LLL:EXT:be_secure_pw/Resources/Private/Language/ux_locallang_csh_mod.xml:option_newPassword.description,password,password2,savebutton';
 		}
 	}
 
